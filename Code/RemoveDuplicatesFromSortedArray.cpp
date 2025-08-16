@@ -136,33 +136,24 @@ int main(){
     vector<int> nums        {1,1};
 
     // setup
-    int prevvalue           {nums[0]};
-    int sourceindex         {1};
-    int destinationindex    {1};
-    int counter             {0};
+    int p       {0};
+    int counter {0};
 
-    // going through it
-    while(sourceindex < nums.size()){
+    // going through the values
+    for(int i = 1; i<nums.size(); ++i){
 
-        // moving source until different from previous value
-        while(sourceindex < nums.size() && nums[sourceindex] == prevvalue)   
-            ++sourceindex;
+        // check values
+        if (nums[i] == nums[p]) {continue;}
 
-        // writing to output 
-        if (destinationindex < nums.size() && sourceindex < nums.size()) {
-            
-            nums[destinationindex]  = nums[sourceindex];                        // copying values from source-index to destination-index
-            prevvalue               = nums[sourceindex];                        // updating previous-value for next-run
-            
-            ++destinationindex;                                                 // updating destination index
-            ++sourceindex;                                                      // updating source-index
-            ++counter;
-        }
+        // writing values
+        ++p;
+        nums[p] = nums[i];
+        ++counter;
     }
 
-    // printing the final outputs
+    // printing the final output
+    cout << format("final-output = {}\n", counter+1);
     cout << format("nums = "); fpv(nums);
-    cout << format("return-value = {}\n", counter);
 
     // return
     return(0);
