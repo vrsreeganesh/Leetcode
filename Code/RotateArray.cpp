@@ -137,6 +137,7 @@ int main(){
     int k   {2};
 
     // setup
+    StopWatch timer;                                        // setting up the timer
     k = k %static_cast<int>(nums.size());                   // to ensure that the value is within range
 
     int source          {0};
@@ -167,7 +168,8 @@ int main(){
     }
 
     // printing the output
-    cout << format("nums = "); fpv(nums);
+    cout << format("nums = "); fpv(nums);                   // printing the updated array, "nums"
+    timer.stop();                                           // printing the time taken 
     
     // return
     return(0);    
