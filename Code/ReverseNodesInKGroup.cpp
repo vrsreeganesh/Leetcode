@@ -1,5 +1,6 @@
 // including header-files
 #include <algorithm>
+#include <unordered_set>
 #include <bitset>
 #include <climits>
 #include <cstddef>
@@ -12,6 +13,8 @@
 #include <vector>
 #include <set>
 #include <numeric>
+#include <functional>
+
 
 // hash-deinfes
 #define PRINTSPACE  std::cout << "\n\n\n\n" << std::endl;
@@ -96,10 +99,17 @@ void fPrintBinaryTree(TreeNode* root){
     
 }
 
-void fPrintLinkedList(ListNode* root){
+void fPrintLinkedList(string    prefix,
+                      ListNode* root){
     if (root == nullptr) return;
-    cout << root->val << " -> ";
-    fPrintLinkedList(root->next);
+    cout << prefix;
+    std::function<void(ListNode*)> runlinkedlist = [&runlinkedlist](ListNode* root){
+        if (root == nullptr) return;
+        cout << root->val << " -> ";
+        runlinkedlist(root->next);
+    };
+    runlinkedlist(root);
+    cout << "|" << endl;
     return;
 }
 
@@ -149,23 +159,27 @@ int main(){
     Timer timer;
     
     // input- configuration
-    ListNode* head                  = new ListNode(1);
+    auto head                       {new ListNode(1)};
     head->next                      = new ListNode(2);
     head->next->next                = new ListNode(3);
     head->next->next->next          = new ListNode(4);
-    head->next->next->next->next    = new ListNode(5); 
-    auto k      {2};
-    
+    head->next->next->next->next    = new ListNode(5);
+    auto k  {2};
+
     // setup
-    ListNode* prehead = new ListNode(); prehead->next = head;
-    ListNode* traveller = prehead;
-    vector<ListNode*> memberList(k, nullptr);  memberList.reserve(k);
+    auto prehead        {new ListNode()};
+    prehead->next       = head;
+    auto traveller      {prehead};
+    vector<ListNode*>   memberList(k, nullptr);  
+    memberList.reserve(k);
     
     // runnings
     while(traveller){
+        
         // filling up the memberList
-        int counter {0}; 
-        ListNode* tempotraveller = traveller->next;
+        auto counter    {0};
+        auto tempotraveller {traveller->next};
+        
         while(counter < k && tempotraveller != nullptr){
             memberList[counter]     = tempotraveller;
             tempotraveller          = tempotraveller->next;
@@ -176,11 +190,11 @@ int main(){
         if (counter!=k) break;
         
         // reconnecting
-        ListNode* beginningOfNextSegment = memberList[memberList.size()-1]->next;
+        auto beginningOfNextSegment {memberList[memberList.size()-1]->next};
         
         // reconnecting
-        traveller->next = memberList[memberList.size()-1];
-        for(int i = memberList.size()-1; i>=1; --i) {memberList[i]->next = memberList[i-1];}
+        traveller->next     = memberList[memberList.size()-1];
+        for(int i = memberList.size()-1; i>=1; --i)     {memberList[i]->next = memberList[i-1];}
         memberList[0]->next = beginningOfNextSegment;
         
         // updating traveller
@@ -188,8 +202,7 @@ int main(){
     }
 
     // returning
-    cout << format("final-output = ");
-    fPrintLinkedList(prehead->next); cout << endl;
+    fPrintLinkedList("final-output = ", prehead->next);   
 
     // return
     return(0);
