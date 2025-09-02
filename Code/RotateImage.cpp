@@ -1,5 +1,6 @@
 // including header-files
 #include <algorithm>
+#include <unordered_set>
 #include <bitset>
 #include <climits>
 #include <cstddef>
@@ -12,6 +13,8 @@
 #include <vector>
 #include <set>
 #include <numeric>
+#include <functional>
+
 
 // hash-deinfes
 #define PRINTSPACE  std::cout << "\n\n\n\n" << std::endl;
@@ -27,6 +30,8 @@ using std::map;
 using std::format;
 using std::deque;
 using std::pair;
+using std::min;
+using std::max;
 
 // vector printing function
 template<typename T>
@@ -94,10 +99,17 @@ void fPrintBinaryTree(TreeNode* root){
     
 }
 
-void fPrintLinkedList(ListNode* root){
+void fPrintLinkedList(string    prefix,
+                      ListNode* root){
     if (root == nullptr) return;
-    cout << root->val << ", ";
-    fPrintLinkedList(root);
+    cout << prefix;
+    std::function<void(ListNode*)> runlinkedlist = [&runlinkedlist](ListNode* root){
+        if (root == nullptr) return;
+        cout << root->val << " -> ";
+        runlinkedlist(root->next);
+    };
+    runlinkedlist(root);
+    cout << "|" << endl;
     return;
 }
 
@@ -147,20 +159,18 @@ int main(){
     Timer timer;
     
     // input- configuration
-    vector<vector<int>> matrix  {
-        {5,1,9,11},
-        {2,4,8,10},
-        {13,3,6,7},
-        {15,14,12,16}
+    vector<vector<int>> matrix {
+        {1,2,3},
+        {4,5,6},
+        {7,8,9}
     };
     
-
     // setup
-    int t_edge = 0;
-    int b_edge = matrix.size()-1;
-    int l_edge = 0;
-    int r_edge = matrix[0].size() -1;
-    int temp;
+    auto t_edge     {0};
+    auto b_edge     {static_cast<int>(matrix.size())-1};
+    auto l_edge     {0};
+    auto r_edge     {static_cast<int>(matrix[0].size())-1};
+    auto temp       {-1};
 
     // shifting layer by layer. 
     int numlayers = (matrix.size())/2;
@@ -169,10 +179,12 @@ int main(){
     for(int i = 0; i<numlayers; ++i){
 
         // breaking if they're the same for some reason
-        if(t_edge == b_edge || l_edge == r_edge) break;
+        if(t_edge == b_edge || l_edge == r_edge)    {break;}
 
         // calculatin width
-        int currwidth = r_edge - l_edge + 1;
+        auto currwidth  {r_edge - l_edge + 1};
+
+
         for(int j = 0; j<currwidth-1; ++j){
                         
             // shifting the four elements for each 
@@ -180,7 +192,7 @@ int main(){
             matrix[t_edge][l_edge+j]    = matrix[b_edge-j][l_edge]; 
             matrix[b_edge-j][l_edge]    = matrix[b_edge][r_edge-j];
             matrix[b_edge][r_edge-j]    = matrix[t_edge+j][r_edge];
-            matrix[t_edge+j][r_edge]      = temp;
+            matrix[t_edge+j][r_edge]    = temp;
         }
 
         // updating edge-parameters based on the layer we're working with
@@ -192,14 +204,9 @@ int main(){
     }
 
     // printing the matrix
-    cout << "final-matrix = \n";
-    for(const auto& x: matrix){
-        for(const auto& y: x){
-            cout << format("{}, ", y);
-        }
-        cout << format("\n");
-    }
-
+    cout << format("print-matrix\n");
+    fPrintMatrix(matrix);
+    
     // return
     return(0);
     
