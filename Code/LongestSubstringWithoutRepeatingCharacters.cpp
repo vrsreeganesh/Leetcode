@@ -1,4 +1,6 @@
 // including header-files
+#include <algorithm>
+#include <unordered_set>
 #include <bitset>
 #include <climits>
 #include <cstddef>
@@ -10,10 +12,13 @@
 #include <unordered_map>
 #include <vector>
 #include <set>
+#include <numeric>
+#include <functional>
+
 
 // hash-deinfes
 #define PRINTSPACE  std::cout << "\n\n\n\n" << std::endl;
-#define PRINTLINE   std::cout << "-------------------------------" << std::endl;
+#define PRINTLINE   std::cout << "==============================================" << std::endl;
 
 // borrowing from namespace std
 using std::cout;
@@ -25,10 +30,18 @@ using std::map;
 using std::format;
 using std::deque;
 using std::pair;
+using std::min;
+using std::max;
 
 // vector printing function
 template<typename T>
 void fPrintVector(vector<T> input){
+    for(auto x: input) cout << x << ",";
+    cout << endl;
+}
+
+template<typename T>
+void fpv(vector<T> input){
     for(auto x: input) cout << x << ",";
     cout << endl;
 }
@@ -46,7 +59,7 @@ void fPrintMatrix(vector<T> input){
 template<typename T, typename T1>
 void fPrintHashmap(unordered_map<T, T1> input){
     for(auto x: input){
-        cout << format("[{},{}] ", x.first, x.second);
+        cout << format("[{},{}] | ", x.first, x.second);
     }
     cout <<endl;
 }
@@ -86,10 +99,17 @@ void fPrintBinaryTree(TreeNode* root){
     
 }
 
-void fPrintLinkedList(ListNode* root){
+void fPrintLinkedList(string    prefix,
+                      ListNode* root){
     if (root == nullptr) return;
-    cout << root->val << ", ";
-    fPrintLinkedList(root);
+    cout << prefix;
+    std::function<void(ListNode*)> runlinkedlist = [&runlinkedlist](ListNode* root){
+        if (root == nullptr) return;
+        cout << root->val << " -> ";
+        runlinkedlist(root->next);
+    };
+    runlinkedlist(root);
+    cout << "|" << endl;
     return;
 }
 
@@ -100,14 +120,14 @@ void fPrintContainer(T input){
     return;
 }
 
-struct StopWatch
+struct Timer
 {
     std::chrono::time_point<std::chrono::high_resolution_clock> startpoint;
     std::chrono::time_point<std::chrono::high_resolution_clock> endpoint;
     std::chrono::duration<long long, std::nano>                 duration;
     
     // constructor
-    StopWatch()     {startpoint = std::chrono::high_resolution_clock::now();}
+    Timer()         {startpoint = std::chrono::high_resolution_clock::now();}
     void start()    {startpoint = std::chrono::high_resolution_clock::now();}
     void stop()     {endpoint   = std::chrono::high_resolution_clock::now(); fetchtime();}
     
@@ -119,21 +139,37 @@ struct StopWatch
         duration = std::chrono::duration_cast<std::chrono::nanoseconds>(endpoint - startpoint);
         cout << format("{} took {}  nanoseconds \n", stringarg, duration.count());
     }
+    void measure(){
+        auto temp = std::chrono::high_resolution_clock::now();
+        auto nsduration  = std::chrono::duration_cast<std::chrono::nanoseconds>(temp - startpoint);
+        auto msduration  = std::chrono::duration_cast<std::chrono::microseconds>(temp - startpoint);
+        auto sduration   = std::chrono::duration_cast<std::chrono::seconds>(temp - startpoint);
+        cout << format("{} nanoseconds | {} microseconds | {} seconds \n", 
+            nsduration.count(), msduration.count(), sduration.count());
+    }
+    ~Timer(){
+        measure();
+    }
 };
-
 
 // main-file ===================================================================
 int main(){
+
+    // starting timer
+    Timer timer;
     
     // input- configuration
-    string s    {"tmmzuxt"};
+    auto s      {string("abcabcbb")};
+    
+    // trivial cases
+    if (s.size() <= 1)  {cout << format("final-output = {}\n", s.size()); return 0;}
 
     // setup
     unordered_map<char, int> histogram;
-    int p1  {0};
     char curr;
-    int finaloutput {-1};
-    int temp_length {-1};
+    auto p1             {0};
+    auto finaloutput    {-1};
+    auto temp_length    {-1};
 
     // going through the thing 
     for(int p2 = 0; p2<s.size(); ++p2){
@@ -142,25 +178,14 @@ int main(){
         curr = s[p2];
 
         // checking if current character is in histogram 
-        if (histogram.find(curr) == histogram.end()) [[unlikely]]
-        {
-            histogram[curr] = 1;
-        }
+        if (histogram.find(curr) == histogram.end()) [[unlikely]]       {histogram[curr] = 1;}
         else [[likely]]
         {
             // checking if count is zero
-            if (histogram[curr] == 0)
-            {
-                histogram[curr] = 1;
-            }
-            else
-            {
+            if (histogram[curr] == 0)       {histogram[curr] = 1;}
+            else{
                 // moving p1 until it arrives at first instance of curr
-                while(s[p1] != curr)    
-                {
-                    --histogram[s[p1]];
-                    ++p1;
-                }
+                while(s[p1] != curr)    {--histogram[s[p1]]; ++p1;}
                 ++p1;
                 histogram[curr] = 1; 
             }
@@ -170,9 +195,10 @@ int main(){
         finaloutput = finaloutput > (p2-p1+1) ? finaloutput : (p2-p1+1);
     }
 
-    // printing 
-    cout << format("longest length = {} \n", finaloutput);
-
+    // returning the final output
+    cout << format("final-output = {}\n", finaloutput);
+    
     // return
-    return(0);    
+    return(0);
+    
 }
