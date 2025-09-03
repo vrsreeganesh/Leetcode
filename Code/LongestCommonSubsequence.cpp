@@ -159,41 +159,36 @@ int main(){
     Timer timer;
     
     // input- configuration
-    auto text1          {string("abc")};
-    auto text2          {string("def" )};
-    auto row            {-1};
-    auto col            {-1};
-    auto entryvalue     {-1};
-    
+    auto text1          {string("bsbininm")};
+    auto text2          {string("jmjkbkjkv")};
+
     // setup
+    auto entryvalue     {-1};
     vector<vector<int>> dptable;
-    for(int i = 0; i<text1.size()+1; ++i) {dptable.push_back(vector<int>(text2.size()+1, 0));};
 
-    // printing the dptable
-    auto fetchrow = [&text2](const int tid){return tid/text2.size();};
-    auto fetchcol = [&text2](const int tid){return tid%text2.size();};
+    // creating dp-table
+    for(int i = 0; i<text1.size()+1; ++i) 
+        dptable.push_back(vector<int>(text2.size()+1, 0));
 
-    // moving from bottom-right
-    for(int tid = text1.size() * text2.size()-1; tid>=0; --tid){
+    // filling dptable
+    for(int row = text1.size()-1; row>=0; --row){
+        for(int col = text2.size()-1; col >= 0; --col){
 
-        // fetching curr-row and curr-col
-        row         = fetchrow(tid);
-        col         = fetchcol(tid);
-        entryvalue  = 0;
+            // checking if current-values are the same
+            if (text1[row] == text2[col])   {entryvalue = 1 + dptable[row+1][col+1];}
+            else                            {entryvalue = std::max(dptable[row+1][col], dptable[row][col+1]);}
 
-        // checking if current-values are the same
-        if (text1[row] == text2[col])   {++entryvalue;}
+            // storing to dptable
+            dptable[row][col] = entryvalue;
 
-        // looking right and down
-        entryvalue += std::max(dptable[row+1][col], dptable[row][col+1]);
-
-        // storing to dptable
-        dptable[row][col] = entryvalue;
-
+        }
     }
 
     // printing the dptable
     cout << format("final-output = {}\n", dptable[0][0]);
+
+    // printing matrix
+    fPrintMatrix(dptable);
     
     // return
     return(0);
