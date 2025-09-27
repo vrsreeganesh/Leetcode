@@ -142,8 +142,8 @@ int main(){
         maxvolume   = maxvolume > currvolume ? maxvolume : currvolume;
 
         // adjusting left and right based on volume
-        if (height[left] < height[right])   {++left;}
-        else                                {--right;}
+        if (height[left] < height[right])       {++left;}
+        else                                    {--right;}
     }
 
     // printing 

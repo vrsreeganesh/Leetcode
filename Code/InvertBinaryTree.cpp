@@ -158,13 +158,13 @@ int main(){
     Timer timer;
     
     // input- configuration
-    auto root           {new TreeNode(4)};
-    root->left          = new TreeNode(2);
-    root->right         = new TreeNode(7);
-    root->left->left    = new TreeNode(1);
-    root->left->right   = new TreeNode(3);
-    root->right->left   = new TreeNode(6);
-    root->right->right  = new TreeNode(9);
+    auto root               {new TreeNode(4)};
+    root->left              = new TreeNode(2);
+    root->right             = new TreeNode(7);
+    root->left->left        = new TreeNode(1);
+    root->left->right       = new TreeNode(3);
+    root->right->left       = new TreeNode(6);
+    root->right->right      = new TreeNode(9);
 
     // setup
     std::function<void(TreeNode*)> fTwist = [&fTwist](TreeNode* root){

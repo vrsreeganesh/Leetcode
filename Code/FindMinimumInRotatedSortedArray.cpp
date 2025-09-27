@@ -162,9 +162,9 @@ int main(){
     auto nums   {vector<int>{3,4,5,1,2}};
 
     // setup
-    auto left   {0};
-    auto right  {static_cast<int>(nums.size())-1};
-    auto mid    {-1};
+    int left                        = 0;
+    int right                       = nums.size()-1;
+    int mid;
 
     // looping through
     while(left < right){
@@ -173,8 +173,8 @@ int main(){
         mid = (left + right)/2;     
 
         // moving pointers
-        if(nums[mid] > nums[right])     {left   = mid + 1;}
-        else                            {right  = mid;}
+        if(nums[mid] > nums[right])     {left = mid + 1;}
+        else                            {right = mid;}
     }
 
     // returning the mid-value

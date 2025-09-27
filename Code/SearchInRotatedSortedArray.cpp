@@ -178,13 +178,13 @@ int main(){
         // checking if the left is sorted
         if(nums[left] <= nums[mid]){
             // checking if the target is out of bounds
-            if (target < nums[left] || target> nums[mid])   {left = mid +1;}
-            else                                            {right = mid -1;}
+            if (target < nums[left] || target> nums[mid])       {left = mid +1;}
+            else                                                {right = mid -1;}
         }
         else{
             // checking if target is out of bounds
-            if (target<nums[mid] || target > nums[right])   {right = mid -1;}
-            else                                            {left = mid + 1;}
+            if (target<nums[mid] || target > nums[right])       {right = mid -1;}
+            else                                                {left = mid + 1;}
         }
     }
 

@@ -126,38 +126,35 @@ struct StopWatch
 int main(){
     
     // input- configuration
-    vector<int> nums    {1,2,3,4};
+    auto nums   {vector<int>{1,2,3,4}};
 
     // setup
-    vector<int> nums_left(nums.size(), 1);
-    vector<int> nums_right(nums.size(), 1);
-    int acc_left            {1};
-    int acc_right           {1};
+    auto left   {vector<int>(nums.size(), 1)};
+    auto right  {vector<int>(nums.size(), 1)};
 
-    // runs
-    for(int i = 0; i<nums.size(); ++i){
+    // building the cumulative products
+    std::partial_sum(nums.begin(), nums.end()-1,
+                     left.begin()+1, 
+                     [](auto arg0, 
+                        auto arg1){
+                            return arg0 * arg1;
+                        });
+    std::partial_sum(nums.rbegin(), nums.rend()-1,
+                     right.rbegin()+1, 
+                     [](auto arg0, 
+                        auto arg1){
+                            return arg0 * arg1;
+                        });
 
-        // source-indces
-        int source_left {i-1};
-        int source_right {static_cast<int>(nums.size())-i}; 
+    // producing the final-output
+    auto finaloutput    {vector<int>(nums.size(),1)};
+    std::transform(left.begin(), left.end(),
+                   right.begin(),
+                   finaloutput.begin(),
+                   std::multiplies<int>());
 
-        // printing values
-        acc_left    *= source_left  == -1          ? 1 : nums[source_left];
-        acc_right   *= source_right == nums.size() ? 1 : nums[source_right];
-
-        // writing to the two values
-        nums_left[i]                    = acc_left;
-        nums_right[nums.size()-i-1]     = acc_right;
-    }
-
-    // building the accumlated value
-    vector<int> finaloutput(nums.size(),1);
-    for(int i = 0; i< finaloutput.size(); ++i){
-        finaloutput[i] = nums_left[i] * nums_right[i];
-    }
-
-    // printing
-    cout << format("finaloutput = "); fPrintVector(finaloutput);
+    // printing the final-output
+    cout << format("final-output = {}\n", finaloutput);
 
     // return
     return(0);

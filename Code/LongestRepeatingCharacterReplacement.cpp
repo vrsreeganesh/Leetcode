@@ -181,8 +181,8 @@ int main(){
         num_characters_local = right - left + 1;
 
         // checking if number of repl
-        maxelement = *(std::max_element(characterCount.begin(), 
-                                        characterCount.end()));
+        maxelement = *(std::max_element(characterCount.begin(), characterCount.end()));
+        
         if (num_characters_local - maxelement > k ) {
             
             characterCount[static_cast<int>(s[left])-65] -= 1;                  // removing the lef tmost element

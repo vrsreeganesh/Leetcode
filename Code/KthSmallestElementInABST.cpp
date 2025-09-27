@@ -1,5 +1,6 @@
 // including header-files
 #include <algorithm>
+#include <unordered_set>
 #include <bitset>
 #include <climits>
 #include <cstddef>
@@ -152,6 +153,34 @@ struct Timer
 };
 
 // main-file ===================================================================
+void foo(const TreeNode*    root, 
+         int&               leftindex, 
+         int&               finalOutput, 
+         bool&              stopsearch,
+         const int          k)
+{
+    // sending it back
+    if (root == nullptr)        return;
+
+    // checking left
+    foo(root->left, leftindex, finalOutput, stopsearch, k);
+    
+    // appending count
+    ++leftindex;
+    if (leftindex == k){
+        
+        finalOutput     = root->val;
+        stopsearch      = true;
+
+    }
+
+    // going right
+    foo(root->right, leftindex, finalOutput, stopsearch, k);
+
+    // goign back
+    return;
+}
+
 int main(){
 
     // starting timer
@@ -162,38 +191,20 @@ int main(){
     root->left          = new TreeNode(1);
     root->right         = new TreeNode(4);
     root->left->right   = new TreeNode(2);
-    auto k              {1};
 
+    auto k  {1};
+    
     // setup
-    int finalOutput;
-    auto stopsearch {false};
-    auto leftindex  {0};
-    std::function<void(const TreeNode*, const int)> foo = [&foo, &leftindex, &finalOutput, &stopsearch](
-        const TreeNode* root,
-        const int k){
-        // sending it back
-        if (root == nullptr)    {return;}
+    auto finalOutput    {-1};
+    auto stopsearch     {false};
+    auto leftindex      {0};
 
-        // checking left
-        if (root->left)         {foo(root->left, k);}
-        
-        // appending count
-        ++leftindex;
-        if (leftindex == k)     {finalOutput = root->val; stopsearch = true;}
-
-        // going right
-        if (root->right)        {foo(root->right, k);}
-
-        // goign back
-        return;
-    };
-
-    // running
-    foo(root, k);
+    // running the search
+    foo(root, leftindex, finalOutput, stopsearch, k);
 
     // printing otuput
     cout << format("final-output = {}\n", finalOutput);
-
+    
     // return
     return(0);
     

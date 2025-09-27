@@ -164,16 +164,16 @@ int main(){
     while(left <= right && top <= bottom){
         
         // moving on upside
-        for(int i = left; i <= right; ++i)  {finalOutput.push_back(matrix[top][i]);}
+        for(int i = left; i <= right; ++i)                          {finalOutput.push_back(matrix[top][i]);}
         
         // moving through the right side
-        for(int i = top+1; i<=bottom-1; ++i)    {finalOutput.push_back(matrix[i][right]);}
+        for(int i = top+1; i<=bottom-1; ++i)                        {finalOutput.push_back(matrix[i][right]);}
         
         // moving through the bottom
-        for(int i = right; top != bottom && i>= left; --i)   {finalOutput.push_back(matrix[bottom][i]);}
+        for(int i = right; top != bottom && i>= left; --i)          {finalOutput.push_back(matrix[bottom][i]);}
         
         // moving through the left
-        for(int i = bottom-1; left!=right &&  i>= top+1; --i)   {finalOutput.push_back(matrix[i][left]);}
+        for(int i = bottom-1; left!=right &&  i>= top+1; --i)       {finalOutput.push_back(matrix[i][left]);}
         
         // updating boundaries
         ++left; --right; ++top; --bottom;

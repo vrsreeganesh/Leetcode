@@ -140,40 +140,86 @@ struct Timer
     }
 };
 
-// main-file ===================================================================
+int fRules(vector< vector<int> >&   board, 
+           int                      row, 
+           int                      col){
+
+    //setup
+    int row_curr;
+    int col_curr;
+    int num_live_neighbours = 0;
+    int selfstatus = board[row][col];
+
+    for(int i = -1; i <=1; ++i){
+        for(int j = -1; j<= 1; ++j){
+
+            // finding current row and column
+            row_curr = row +i;
+            col_curr = col +j;
+
+            // continuing if same element
+            if (row_curr == row && col_curr == col) continue;
+
+            // continueing for edge cases
+            if (row_curr <0                 ||  \
+                row_curr >= board.size()    ||  \
+                col_curr < 0                ||  \
+                col_curr >= board[0].size()) {continue;}
+
+            // checking if neighbour is live or not
+            if (board[row_curr][col_curr] == 1)
+                ++num_live_neighbours;
+        }
+    }
+
+    // the wild case where the current cell is dead and numneighbrs = 3
+    if (selfstatus == 0 && num_live_neighbours == 3)        return 1;
+    if (selfstatus == 0) return 0;
+
+    // checking life-rule conditions
+    if (selfstatus == 1 && num_live_neighbours < 2)         return 0;
+    else if (selfstatus == 1 && num_live_neighbours < 4)    return 1;
+    else if (selfstatus == 1 && num_live_neighbours > 3)    return 0;
+
+    // return default 
+    return -1000;
+    }
+
 int main(){
 
     // starting timer
     Timer timer;
     
     // input- configuration
-    vector<vector<int>> matrix{
-        {0,1,2,0},
-        {3,4,5,2},
-        {1,3,1,5}
+    vector<vector<int>> board{
+        {0,1,0},
+        {0,0,1},
+        {1,1,1},
+        {0,0,0}
     };
     
     // setup
-    auto    colregister     {vector<bool>(matrix[0].size(), false)}; 
-    auto    rowregister     {vector<bool>(matrix.size(),    false)};
-    
-    // registering
-    #pragma omp parallel for
-    for(int i = 0; i<matrix.size(); ++i)
-        for(int j = 0; j<matrix[0].size(); ++j)
-            if (matrix[i][j] == 0) {colregister[j] = true; rowregister[i] = true;}
-            
-    // rewriting
-    #pragma omp parallel for
-    for(int i = 0; i<matrix.size(); ++i)
-        for(int j = 0; j<matrix[0].size(); ++j)
-            if (colregister[j] == true || rowregister[i] == true) {matrix[i][j] = 0;}
+    auto x = board;
+    int statustoadd;
 
-    // printing the final output
-    cout << format("final-output \n");
-    fPrintMatrix(matrix);
+    // going through the elements
+    for(int i = 0; i<board.size(); ++i){
+        for(int j = 0; j<board[0].size(); ++j){
+
+            // updating cell based on rules
+            statustoadd = fRules(board, i, j);
+
+            // adding status to x
+            x[i][j] = statustoadd;
+        }
+    }
+
+    // copying results back
+    std::copy(x.begin(), x.end(), board.begin());
+
+    // printing the matrix
+    cout << format("board = \n"); fPrintMatrix(board);
 
     // return
     return(0);
-    
 }
