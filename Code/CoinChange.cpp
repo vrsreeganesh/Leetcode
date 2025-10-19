@@ -170,47 +170,21 @@ int main(){
     if (amount == 0)    {return 0;}
 
     // setup
-    auto    finaloutput     {static_cast<int>(-1)};
-
-    // buidling dp tbale
-    auto    dptable     {std::vector<int>(amount+1, std::numeric_limits<int>::max())};
+    vector<int> dptable(amount + 1, std::numeric_limits<int>::max()); 
     dptable[0] = 0;
 
-    // going through the values
-    for(auto i = 0; i <= amount; ++i)
-    {
-        // fetching current-value-to-fill
-        const   auto&    curr_value_to_fill      {i};
-
-        // checking if this value is already in the coins
-        if (std::find(
-            coins.begin(),
-            coins.end(),
-            curr_value_to_fill) != coins.end())     {dptable[i] = 1; continue;}
-
-        // in case there isn't, we go through the rest of the dptable values
-        auto    curr_output     {std::numeric_limits<int>::max()};
-        for(auto j = i -1; j>(i-1)/2; --j){
-            const   auto&   curr_dp_table_value     {dptable[j]};
-            const   auto    complement_value        {dptable[curr_value_to_fill - j]};
-            const   auto    sum_values              {
-                (curr_dp_table_value == std::numeric_limits<int>::max() || 
-                complement_value == std::numeric_limits<int>::max())    ?
-                std::numeric_limits<int>::max() :   curr_dp_table_value + complement_value
-            };
-            curr_output =   std::min(
-                curr_output, 
-                sum_values
-            );
+    // going through each coin
+    for (int coin : coins) {
+        // calculating upward from that coin
+        for (int x = coin; x <= amount; ++x) {
+            if (dptable[x - coin] != std::numeric_limits<int>::max())
+                dptable[x] = std::min(dptable[x], 
+                                      dptable[x - coin] + 1);
         }
-
-        // updating to dptable
-        dptable[i] = curr_output;
     }
 
-    // processing final-output
-    if (dptable[dptable.size()-1] != std::numeric_limits<int>::max())
-        finaloutput = dptable[dptable.size()-1];
+    // returning final output
+    return dptable[amount] == std::numeric_limits<int>::max() ? -1 : dptable[amount];
 
     // returning final output
     cout << format("final-output = {}\n", finaloutput);

@@ -184,15 +184,15 @@ int main(){
         // calculatin width
         auto currwidth  {r_edge - l_edge + 1};
 
-
+        // shifting it around 
         for(int j = 0; j<currwidth-1; ++j){
                         
             // shifting the four elements for each 
             temp                        = matrix[t_edge][l_edge+j];
-            matrix[t_edge][l_edge+j]    = matrix[b_edge-j][l_edge]; 
-            matrix[b_edge-j][l_edge]    = matrix[b_edge][r_edge-j];
-            matrix[b_edge][r_edge-j]    = matrix[t_edge+j][r_edge];
-            matrix[t_edge+j][r_edge]    = temp;
+            matrix[ t_edge ][ l_edge+j ]    = matrix[b_edge-j][l_edge]; 
+            matrix[ b_edge-j ][ l_edge ]    = matrix[b_edge][r_edge-j];
+            matrix[ b_edge ][ r_edge-j ]    = matrix[t_edge+j][r_edge];
+            matrix[ t_edge+j ][ r_edge ]    = temp;
         }
 
         // updating edge-parameters based on the layer we're working with
